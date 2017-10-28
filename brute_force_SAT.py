@@ -17,7 +17,6 @@ def list_spremenljivk(formula):
     return spremenljivke
 
 def brute_force(formula):
-    spremenljivke = list_spremenljivk(formula)
     def search(spremenljivke, v, formula):
         if len(spremenljivke)==0:
             if formula.evaluate(v):
@@ -35,7 +34,11 @@ def brute_force(formula):
             if search(spremenljivke, v, formula):
                 return True
             return False
-    if search(spremenljivke, dict(), formula):
+    if formula == True:
+        return "formula je satisfiable"
+    elif formula == False:
+        return "formula ni satisfiable"
+    elif search(list_spremenljivk(formula), dict(), formula):
         return "formula je satisfiable"
     else:
         return "formula ni satisfiable"
