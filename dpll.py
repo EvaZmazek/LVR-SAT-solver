@@ -123,7 +123,10 @@ def simplify_by_literal(formula, l, tf):
             else:
                 clauses.remove(clause)
                 i, st_clauses = i-1, st_clauses-1
-    return formula
+    if st_clauses==0:
+        return T
+    else:
+        return formula
 
                 
                 
