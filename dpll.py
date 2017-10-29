@@ -2,30 +2,40 @@ from boolean import *
 
 #predpostavljamo, da je formula podana v CNF obliki
 
-def get_all_from_CNF(formula):
-    if not isinstance(formula, And):
-        return "formula ni podana v CNF obliki!"
+def get_all_CNF(formula, spremenljivke=set(), spremenljivke_Not=set()):
+    if isinstance(formula, Variable):
+        spremenljivke = spremenljivke.union(formula.x)
+    elif isinstance(formula, Not):
+        spremenljivke_Not = spremenljivke_Not.union(get_all_CNF(formula.x)[0])
+    elif isinstance(formula, And) or isinstance(formula, Or):
+        for term in formula.terms:
+            [spremenljivke_nove, spremenljivke_Not_nove] = get_all_CNF(term)
+            spremenljivke = spremenljivke.union(spremenljivke_nove)
+            spremenljivke_Not = spremenljivke_Not.union(spremenljivke_Not_nove)
+    return [spremenljivke, spremenljivke_Not]
 
 def my_dpll(formula):
     valuation = dict()
     print(formula)
-    if not isinstance(formula, And):
-        return "formula ni podana v CNF obliki!"
-    clauses = formula.terms
-    print(clauses)
-    #1. prazen seznam clausesov predstavlja vrednost T (satisfiable solution)
-    if len(clauses)==0:
-        return T
-    #2. pregledamo, če je kateri izmed clausesov prazen, potem rešitve ni
-    for clause in clauses:
-        literals = clause.terms
-        if len(literals) == 0:
-            return F
+    vrednost = simplify_unit_clause(formula, valuation)
+    if not vrednost:
+        return "Formula " + str(formula) + " has no satisfiable solution"
+    spremenljivke, spremenljivke_Not = get_all_CNF(formula)
+    print(spremenljivke, spremenljivke_Not)
+    pure_literal = []
+    for spre in spremenljivke.union(spremenljivke_Not):
+        if (spre in spremenljivke and spre not in spremenljivke_Not) \
+           or (spre not in spremenljivke and spre in spremenljivke_Not):
+            pure_literal.append(spre)
+    print(pure_literal)
+            
+    
 
 def simplify_dpll(formula):
     pass
 
 def simplify_unit_clause(formula, valuation=dict()):
+    print("iščem unit clause")
     clauses = formula.terms
     print(formula)
     st_clauses = len(clauses)
@@ -74,7 +84,9 @@ def simplify_pore_literal(formula, valuation):
     pass
 
 def simplify_by_literal(formula, l, tf):
+    print("izbrišem en unit clause")
     print(formula)
+    print("poenostavljam po spremenljivki " + str(l))
     clauses = formula.terms
     st_clauses = len(clauses)
     i = 0
