@@ -117,10 +117,10 @@ def simplify_by_literal(formula, l, tf):
                 formula = F
                 break
         elif isinstance(clause, Not):
-            if tf:
+            if tf and clause.x==l:
                 formula = F
                 break
-            else:
+            elif clause.x==l:
                 clauses.remove(clause)
                 i, st_clauses = i-1, st_clauses-1
     if st_clauses==0:
