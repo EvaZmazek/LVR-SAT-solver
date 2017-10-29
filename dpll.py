@@ -24,10 +24,10 @@ def get_all_CNF(formula, spremenljivke=set(), spremenljivke_Not=set()):
             spremenljivke_Not = spremenljivke_Not.union(spremenljivke_Not_nove)
     return [spremenljivke, spremenljivke_Not]
 
-def my_dpll(formula):
-    st_vseh_spremenljivk = len(get_all(formula))
+def my_dpll(formula, valuation=dict()):
+    vse_spremenljivke = get_all(formula)
+    st_vseh_spremenljivk = len(vse_spremenljivke)
     zacetna = And(*formula.terms) #to se verjetno da kako izboljšati
-    valuation = dict()
     vrednost = simplify_unit_clause(formula, valuation)
     if not vrednost:
         return False
@@ -50,6 +50,9 @@ def my_dpll(formula):
             if vrednost == F:
                 return False
             if vrednost == T:
+                for spremenljivka in vse_spremenljivke:
+                    if spremenljivka not in valuation:
+                        valuation[spremenljivka] = True
                 return valuation
         else:
             valuation[plit] = False
@@ -58,35 +61,27 @@ def my_dpll(formula):
             if vrednost == F:
                 return False
             if vrednost == T:
+                for spremenljivka in vse_spremenljivke:
+                    if spremenljivka not in valuation:
+                        valuation[spremenljivka] = True
                 return valuation
-    if len(valuation)==st_vseh_spremenljivk and zacetna.evaluate(valuation):
-        print(valuation)
-        return valuation
+    nedolocene_spremenljivke = get_all(formula)
+    if len(nedolocene_spremenljivke)==0:
+        if len(valuation)==st_vseh_spremenljivk and zacetna.evaluate(valuation):
+            return valuation
+        for spremenljivka in vse_spremenljivke:
+            if spremenljivka not in valuation:
+                valuation[spremenljivka] = True
+            if zacetna.evaluate(valuation):
+                return valuation
+            else:
+                return False
     else:
         print("grem preizkušat:")
-        nedolocene_spremenljivke = get_all(formula)
         doloci_l = nedolocene_spremenljivke.pop()
-        clauses = formula.terms
-        formula_prepisana = And(*clauses)
-        valuation[doloci_l] = True
-        simplify_by_literal(formula_prepisana, doloci_l, True)
-        vrednost = my_dpll(formula_prepisana)
-        if vrednost != False:
-            valuation.update(vrednost)
-            return valuation
-        for nedolocena in nedolocene_spremenljivke:
-            try:
-                del valuation[nedolocena]
-            except:
-                pass
-        clauses = formula_prepisana.terms
-        formula_prepisana = And(*clauses)
-        valuation[doloci_l] = False
-        simplify_by_literal(formula_prepisana, doloci_l, False)
-        vrednost = my_dpll(formula_prepisana)
-        if vrednost != False:
-            return valuation.update(vrednost)
-        return False
+        print(formula)
+        my_dpll(formula, valuation)
+        return valuation
 
 def simplify_unit_clause(formula, valuation=dict()):
     print("iščem unit clause")
@@ -153,31 +148,26 @@ def simplify_by_literal(formula, l, tf):
         if isinstance(clause, Or):
             literals = clause.terms
             if len(literals)==0:
-                formula = F
-                break
+                return F
             elif tf:
                 if l in literals:
                     clauses.remove(clause)
                     i, st_clauses = i-1, st_clauses-1
                 if Not(l) in literals:
                     if len(literals)==1:
-                        formula = F
-                        break
+                        return F
                     else:
                         literals.remove(Not(l))
                         if len(literals)==1:
-                            formula = F
-                            break
+                            return F
             else:
                 if l in literals:
                     if len(literals)==1:
-                        formula = F
-                        break
+                        return F
                     else:
                         literals.remove(l)
                         if len(literals)==1:
-                            formula = F
-                            break
+                            return F
                 if Not(l) in literals:
                     clauses.remove(clause)
                     i, st_clauses = i-1, st_clauses-1
@@ -186,12 +176,10 @@ def simplify_by_literal(formula, l, tf):
                 clauses.remove(clause)
                 i, st_clauses = i-1, st_clauses-1
             elif clause == l:
-                formula = F
-                break
+                return F
         elif isinstance(clause, Not):
             if tf and clause.x==l:
-                formula = F
-                break
+                return F
             elif clause.x==l:
                 clauses.remove(clause)
                 i, st_clauses = i-1, st_clauses-1
