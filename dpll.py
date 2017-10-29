@@ -39,9 +39,10 @@ def my_dpll(formula):
         if (spre in spremenljivke and spre not in spremenljivke_Not) \
            or (spre not in spremenljivke and spre in spremenljivke_Not):
             pure_literal.append(spre)
-    #ne rabimo pazit na že vnešene vrednosti, kerv novi formuli teh spremenljivk ni več
+    #ne rabimo pazit na že vnešene vrednosti, ker v novi formuli teh spremenljivk ni več
     #(so že poenostavljene iz formule)
     for plit in pure_literal:
+        #TODO nevem, če je treba iti čez vse. Lahko se katera že prej izbriše!!!!!!
         if plit in spremenljivke:
             valuation[plit] = True
             print("poenostavljam zaradi pure variable")
