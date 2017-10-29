@@ -25,9 +25,7 @@ def my_dpll(formula):
 def simplify_dpll(formula):
     pass
 
-def simplify_unit_clause(formula, valuation):
-    #TODO dodaj še spreminjanje spremenljivk glede na že znane vrednosti
-    #TODO končaj program, če v slovar dodajaš drugačno vrednost, kot je že dodana
+def simplify_unit_clause(formula, valuation=dict()):
     clauses = formula.terms
     print(formula)
     st_clauses = len(clauses)
@@ -42,23 +40,30 @@ def simplify_unit_clause(formula, valuation):
                 clause = literals[0]
                 if isinstance(clause, Variable):
                     valuation[clause.x]=True
-                    simplify_by_literal(formula, clause.x, True)
+                    vrednost = simplify_by_literal(formula, clause.x, True)
+                    if not vrednost:
+                        return False
                 elif isinstance(clause, Not):
                     valuation[clause.x.x]=False
-                    simplify_by_literal(formula, clause.x.x, False)
+                    vrednost = simplify_by_literal(formula, clause.x.x, False)
+                    if vrednost==F:
+                        return False
                 simplify_unit_clause(formula, valuation)
                 return valuation
         elif isinstance(clause, Variable):
             valuation[clause.x]=True
             clauses.remove(clause)
-            simplify_by_literal(formula, clause.x, True)
+            vrednost = simplify_by_literal(formula, clause.x, True)
+            if vrednost==F:
+                return False
             simplify_unit_clause(formula, valuation)
             return valuation
         elif isinstance(clause, Not):
             valuation[clause.x.x]=False
             clauses.remove(clause)
-            i, st_clauses = i-1, st_clauses-1
-            simplify_by_literal(formula, clause.x.x, False)
+            vrednost = simplify_by_literal(formula, clause.x.x, False)
+            if vrednost==F:
+                return False
             simplify_unit_clause(formula, valuation)
             return valuation
 
