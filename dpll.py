@@ -30,7 +30,7 @@ def my_dpll(formula):
     valuation = dict()
     vrednost = simplify_unit_clause(formula, valuation)
     if not vrednost:
-        return "Formula has no satisfiable solution"
+        return False
     spremenljivke, spremenljivke_Not = get_all_CNF(formula)
     pure_literal = []
     prva_dolzina = len(valuation)
@@ -48,24 +48,45 @@ def my_dpll(formula):
             print("poenostavljam zaradi pure variable")
             vrednost = simplify_by_literal(formula, plit, True)
             if vrednost == F:
-                return "Formula has no satisfiable solution"
+                return False
             if vrednost == T:
-                return "Formula has satisfiable solution"
+                return valuation
         else:
             valuation[plit] = False
             print("poenostavljam zaradi pure variable")
             vrednost = simplify_by_literal(formula, plit, False)
             if vrednost == F:
-                return "Formula has no satisfiable solution"
+                return False
             if vrednost == T:
-                return "Formula has satisfiable solution"
+                return valuation
     if len(valuation)==st_vseh_spremenljivk and zacetna.evaluate(valuation):
-        return "Formula " + str(zacetna) + " has satisfiable solution: " + str(valuation)
-            
-    
-
-def simplify_dpll(formula):
-    pass
+        print(valuation)
+        return valuation
+    else:
+        print("grem preizkušat:")
+        nedolocene_spremenljivke = get_all(formula)
+        doloci_l = nedolocene_spremenljivke.pop()
+        clauses = formula.terms
+        formula_prepisana = And(*clauses)
+        valuation[doloci_l] = True
+        simplify_by_literal(formula_prepisana, doloci_l, True)
+        vrednost = my_dpll(formula_prepisana)
+        if vrednost != False:
+            valuation.update(vrednost)
+            return valuation
+        for nedolocena in nedolocene_spremenljivke:
+            try:
+                del valuation[nedolocena]
+            except:
+                pass
+        clauses = formula_prepisana.terms
+        formula_prepisana = And(*clauses)
+        valuation[doloci_l] = False
+        simplify_by_literal(formula_prepisana, doloci_l, False)
+        vrednost = my_dpll(formula_prepisana)
+        if vrednost != False:
+            return valuation.update(vrednost)
+        return False
 
 def simplify_unit_clause(formula, valuation=dict()):
     print("iščem unit clause")
