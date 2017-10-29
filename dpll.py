@@ -15,12 +15,12 @@ def my_dpll(formula):
     print(clauses)
     #1. prazen seznam clausesov predstavlja vrednost T (satisfiable solution)
     if len(clauses)==0:
-        return True
+        return T
     #2. pregledamo, če je kateri izmed clausesov prazen, potem rešitve ni
     for clause in clauses:
         literals = clause.terms
         if len(literals) == 0:
-            return False
+            return F
 
 def simplify_dpll(formula):
     pass
@@ -28,40 +28,39 @@ def simplify_dpll(formula):
 def simplify_unit_clause(formula, valuation):
     #TODO dodaj še spreminjanje spremenljivk glede na že znane vrednosti
     #TODO končaj program, če v slovar dodajaš drugačno vrednost, kot je že dodana
-    print(formula)
     clauses = formula.terms
-    for clause in clauses:
+    print(formula)
+    st_clauses = len(clauses)
+    i = 0
+    while i < st_clauses:
+        clause = clauses[i]
+        i = i+1
         if isinstance(clause, Or):
             literals = clause.terms
             if len(literals)==1:
                 clauses.remove(clause)
-                formula = And(*clauses)
                 clause = literals[0]
-                if isinstance(literals[0], Variable):
+                if isinstance(clause, Variable):
                     valuation[clause.x]=True
+                    simplify_by_literal(formula, clause.x, True)
                 elif isinstance(clause, Not):
-                    if not isinstance(clause.x, Variable):
-                        print("formula ni podana v CNF obliki!")
                     valuation[clause.x.x]=False
+                    simplify_by_literal(formula, clause.x.x, False)
                 simplify_unit_clause(formula, valuation)
-                break
-            else:
-                continue
+                return valuation
         elif isinstance(clause, Variable):
             valuation[clause.x]=True
             clauses.remove(clause)
-            formula = And(*clauses)
+            simplify_by_literal(formula, clause.x, True)
             simplify_unit_clause(formula, valuation)
-            break
+            return valuation
         elif isinstance(clause, Not):
-            if not isinstance(clause.x, Variable):
-                print("formula ni podana v CNF obliki!")
             valuation[clause.x.x]=False
             clauses.remove(clause)
-            formula = And(*clauses)
+            i, st_clauses = i-1, st_clauses-1
+            simplify_by_literal(formula, clause.x.x, False)
             simplify_unit_clause(formula, valuation)
-            break
-    return valuation
+            return valuation
 
 def simplify_pore_literal(formula, valuation):
     #mogoče pojdi čez seznam vseh spremenljivk in označi, če je spremenljivka (nastavi na true),
@@ -72,7 +71,6 @@ def simplify_pore_literal(formula, valuation):
 def simplify_by_literal(formula, l, tf):
     print(formula)
     clauses = formula.terms
-    print(clauses)
     st_clauses = len(clauses)
     i = 0
     while i < st_clauses:
