@@ -87,7 +87,7 @@ def simplify_by_literal(formula, l, tf):
                 if l in literals:
                     clauses.remove(clause)
                     i, st_clauses = i-1, st_clauses-1
-                elif Not(l) in literals:
+                if Not(l) in literals:
                     if len(literals)==1:
                         formula = F
                         break
@@ -102,11 +102,11 @@ def simplify_by_literal(formula, l, tf):
                         formula = F
                         break
                     else:
-                        literals.remove(l.x)
+                        literals.remove(l)
                         if len(literals)==1:
                             formula = F
                             break
-                elif Not(l) in literals:
+                if Not(l) in literals:
                     clauses.remove(clause)
                     i, st_clauses = i-1, st_clauses-1
         elif isinstance(clause, Variable):
