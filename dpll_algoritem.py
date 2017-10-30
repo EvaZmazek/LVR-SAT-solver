@@ -193,8 +193,27 @@ def my_dpll(formula, koncni_valuation=None):
     if formula == T:
         return koncni_valuation
     elif formula == F:
-        return unsatistiable
+        return unsatisfiable
     else:
-        print("other")
-    pass
+        clauses = formula.terms
+        formulaTrue = And(*clauses)
+        formulaFalse = And(*clauses)
+        valuationTrue = dict()
+        valuationFalse = dict()
+        for vrednost in koncni_valuation:
+            valuationTrue[vrednost] = koncni_valuation[vrednost]
+            valuationFalse[vrednost] = koncni_valuation[vrednost]
+        spremenljivka = spremenljivke_zdaj.pop()
+        valuationTrue[spremenljivka] = True
+        valuationFalse[spremenljivka] = False
+        formulaTrue = simplify_by_literal(formulaTrue, spremenljivka, True)
+        formulaFalse = simplify_by_literal(formulaFalse, spremenljivka, False)
+        globinaTrue = my_dpll(formulaTrue, valuationTrue)
+        globinaFalse = my_dpll(formulaFalse, valuationFalse)
+        if globinaTrue != unsatisfiable:
+            return globinaTrue
+        elif globinaFalse != unsatisfiable:
+            return globinaFalse
+        else:
+            return unsatisfiable
     
