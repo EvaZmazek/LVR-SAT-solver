@@ -1,3 +1,4 @@
+import copy
 from boolean import*
 
 #možna izboljšava: p in Not(p) se skupaj pojavljata le v istam Oru
@@ -177,11 +178,7 @@ def my_dpll(formula, koncni_valuation=None):
     koncni_valuation.update(valuation_pure_literals)
     #mogoče bi 3. del posebaj
     spremenljivke_zdaj = get_all(formula)
-    clauses = formula.terms
-    clauses_shrani = []
-    for clause in clauses:
-        clauses_shrani.append(clause)
-    formula_shrani = And(*clauses_shrani)
+    formula_shrani = copy.deepcopy(formula)
     for spremenljivka in spremenljivke_na_zacetku:
         if (spremenljivka not in koncni_valuation) and \
            (spremenljivka not in spremenljivke_zdaj):
@@ -192,9 +189,7 @@ def my_dpll(formula, koncni_valuation=None):
     elif formula == F:
         return unsatisfiable
     else:
-        valuation_shrani = dict()
-        for vrednost in koncni_valuation:
-            valuation_shrani[vrednost] = koncni_valuation[vrednost]
+        valuation_shrani = copy.deepcopy(koncni_valuation)
         spr = spremenljivke_zdaj.pop()
         koncni_valuation[spr] = True
         formula = simplify_by_literal(formula, spr, True)
@@ -202,6 +197,7 @@ def my_dpll(formula, koncni_valuation=None):
         if globina != unsatisfiable:
             return globina
         else:
+            print("druga opcija: začnemo s formulo " + str(formula_shrani))
             valuation_shrani[spr] = False
             formula_shrani = simplify_by_literal(formula_shrani, spr, False)
             return my_dpll(formula_shrani, valuation_shrani)
