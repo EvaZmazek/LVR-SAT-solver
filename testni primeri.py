@@ -10,7 +10,8 @@ f = And("p", Or("p", "r"), Or(Not("r"), Not("q"),"q"))
 f = And("p", Or("p", "r"), Or(Not("r"), "q"))
 #print(simplify_pure_literals(f))
 
-f = And(Or("p", "q","r", "m"), Or("p", Not("q")), Or(Not("p"), "q"), "r", Or("l", "p"))
+f = And(Or("p", "q","r", "m"), Or("p", Not("q")), Or(Not("p"), "q"), "r", Or("l", "p"), Or(Not("p"), Not("m")))
 #print(simplify_pure_literals(f))
 
 print(my_dpll(f))
+

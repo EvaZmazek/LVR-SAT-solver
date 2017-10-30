@@ -52,8 +52,6 @@ def simplify_unit_clauses(formula, koncni_valuation=None):
     #Variable, nastavi na vrednost True in clause, ki so razreda Not,
     #nastavi na False. Formulo poenostavi po spremenljivkah, ki so bile
     #določene.
-    print("poenostavljam unit clauses:" + str(formula) + "!!!!!:")
-    print("koncni_valuation:" + str(koncni_valuation))
     if koncni_valuation is None:
         koncni_valuation = dict()
     valuation = dict()
@@ -80,7 +78,6 @@ def simplify_unit_clauses(formula, koncni_valuation=None):
                         valuation[literals[0].x]=True
                     elif isinstance(literals[0], Not):
                         valuation[literals[0].x.x]=False
-    print("pregleda vse clause in doda stvari v:" + str(valuation))
     if len(valuation) == 0:
         return [formula, koncni_valuation]
     else:
@@ -118,7 +115,6 @@ def simplify_pure_literals(formula, koncni_valuation=None):
 
 def simplify_by_literal(formula, l, tf):
     #funkcija poenostavi formulo formula glede na spremenljivko l.
-    print("poenostavljam po spremenljivki " + str(l) + ":" + str(formula) + "!!!!!!:")
     clauses = formula.terms
     st_clauses = len(clauses)
     i = 0
@@ -126,94 +122,86 @@ def simplify_by_literal(formula, l, tf):
         clause = clauses[i]
         i = i+1
         if isinstance(clause, Variable):
-            print("Variable:" + str(clause))
             if (tf and clause==l) or clause==T:
                 clauses.remove(clause)
                 i, st_clauses = i-1, st_clauses-1
             elif (not tf and clause==l) or clause==F:
                 return F
         if isinstance(clause, Not):
-            print("Not:" + str(clause))
             if (tf and clause.x==l) or clause.x==T:
                 return F
             elif (not tf and clause.x==l) or clause.x==F:
                 clauses.remove(clause)
                 i, st_clauses = i-1, st_clauses-1
         if isinstance(clause, Or):
-            print("Or:" + str(clause))
             literals = clause.terms
             if len(literals)==0:
-                print("literals je prazen")
                 return F
             if (l in literals and tf) or (Not(l) in literals and not tf) \
                or (T in literals):
-                print("v literals so že l(True) ali Not(l) (False) ali T")
                 clauses.remove(clause)
                 i, st_clauses = i-1, st_clauses-1
-                print(formula)
             else:
                 if l in literals and not tf:
-                    print("v literals l in False")
                     literals.remove(l)
                 if Not(l) in literals and tf:
-                    print("v literals Not(l) in True")
                     literals.remove(Not(l))
                 if F in literals:
-                    print("v literals F")
                     literals.remove(F)
                 if len(literals)==0:
                     return F
-                print(formula)
     if st_clauses == 0:
         return T
     else:
         return formula
 
 def my_dpll(formula, koncni_valuation=None):
+    print("formula: " + str(formula))
+    #funkcija po vrsti najprej poenostavi formulo glede na unit clause,
+    #nato glede na pure literals. Za tem doda spremenljivke, ki so se izgubile
+    #med poenostavljanjem formule. Nastavi jih na True.
+    #če še formula nima vrednost T ali F, nastavi eno izmed
+    #neznanih spremenljivk na True in preveri, če potem vrne rešitev.
+    #če je rešitev unsatistiable, nastavi to spremenljivko na F in vrne rezultat
     unsatisfiable = "formula is unsatisfiable"
     if koncni_valuation is None:
         koncni_valuation = dict()
     spremenljivke_na_zacetku = get_all(formula)
-    print(spremenljivke_na_zacetku)
+    print("POENOSTAVLJAM FORMULO GLEDE NA UNIT CLAUSE!!!!!!!!!")
     [formula, valuation_unit_clauses] = simplify_unit_clauses(formula)
-    print(valuation_unit_clauses)
+    print(formula)
     koncni_valuation.update(valuation_unit_clauses)
-    print(koncni_valuation)
+    print("POENOSTAVLJAM FORMULO GLEDE NA PURE LITERALS!!!!!!!!!")
     [formula, valuation_pure_literals] = simplify_pure_literals(formula)
-    print(valuation_pure_literals)
+    print(formula)
     koncni_valuation.update(valuation_pure_literals)
-    print(koncni_valuation)
     #mogoče bi 3. del posebaj
     spremenljivke_zdaj = get_all(formula)
+    clauses = formula.terms
+    clauses_shrani = []
+    for clause in clauses:
+        clauses_shrani.append(clause)
+    formula_shrani = And(*clauses_shrani)
     for spremenljivka in spremenljivke_na_zacetku:
         if (spremenljivka not in koncni_valuation) and \
            (spremenljivka not in spremenljivke_zdaj):
             koncni_valuation[spremenljivka] = True
-    print(koncni_valuation)
+    #če je velikost spremenljivk zdaj enaka 0, vrni rezultat
     if formula == T:
         return koncni_valuation
     elif formula == F:
         return unsatisfiable
     else:
-        clauses = formula.terms
-        formulaTrue = And(*clauses)
-        formulaFalse = And(*clauses)
-        valuationTrue = dict()
-        valuationFalse = dict()
+        valuation_shrani = dict()
         for vrednost in koncni_valuation:
-            valuationTrue[vrednost] = koncni_valuation[vrednost]
-            valuationFalse[vrednost] = koncni_valuation[vrednost]
-        spremenljivka = spremenljivke_zdaj.pop()
-        valuationTrue[spremenljivka] = True
-        valuationFalse[spremenljivka] = False
-        formulaTrue = simplify_by_literal(formulaTrue, spremenljivka, True)
-        formulaFalse = simplify_by_literal(formulaFalse, spremenljivka, False)
-        globinaTrue = my_dpll(formulaTrue, valuationTrue)
-        globinaFalse = my_dpll(formulaFalse, valuationFalse)
-        if globinaTrue != unsatisfiable:
-            return globinaTrue
-        elif globinaFalse != unsatisfiable:
-            return globinaFalse
+            valuation_shrani[vrednost] = koncni_valuation[vrednost]
+        spr = spremenljivke_zdaj.pop()
+        koncni_valuation[spr] = True
+        formula = simplify_by_literal(formula, spr, True)
+        globina = my_dpll(formula, koncni_valuation)
+        if globina != unsatisfiable:
+            return globina
         else:
-            return unsatisfiable
-    
+            valuation_shrani[spr] = False
+            formula_shrani = simplify_by_literal(formula_shrani, spr, False)
+            return my_dpll(formula_shrani, valuation_shrani)
