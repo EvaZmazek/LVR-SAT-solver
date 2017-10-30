@@ -39,6 +39,10 @@ def find_pure_literals(formula):
     return [pure_literals, pure_literals_not]
     
 def simplify_unit_clauses(formula, koncni_valuation=dict()):
+    #funkcija poenostavi formulo tako, da clause, ki so instance razreda
+    #Variable, nastavi na vrednost True in clause, ki so razreda Not,
+    #nastavi na False. Formulo poenostavi po spremenljivkah, ki so bile
+    #določene.
     print("poenostavljam unit clauses:" + str(formula) + "!!!!!:")
     print("koncni_valuation:" + str(koncni_valuation))
     valuation = dict()
@@ -67,17 +71,14 @@ def simplify_unit_clauses(formula, koncni_valuation=dict()):
                         valuation[literals[0].x.x]=False
     print("plegleda vse clause in doda stvari v:" + str(valuation))
     if len(valuation) == 0:
-        print([formula, koncni_valuation])
         return [formula, koncni_valuation]
     else:
         for var in valuation:
             koncni_valuation[var] = valuation[var]
             formula = simplify_by_literal(formula, var, valuation[var])
             if formula==T:
-                print([T, koncni_valuation])
                 return [T, koncni_valuation]
             elif formula == F:
-                print([F, koncni_valuation])
                 return [F, koncni_valuation]
         return simplify_unit_clauses(formula, koncni_valuation)
         
@@ -89,7 +90,19 @@ def simplify_pure_literals(formula):
     #Variable nastavi na True ter poenostavi formulo glede na to spremenljivko.
     #Spremenljivke kot instance razreda Not pa nastavi na False ter poenostavi
     #formulo glede na to spremenljivko
-    pass
+    valuation = dict()
+    [pure_literals, pure_literals_Not]=find_pure_literals(formula)
+    if len(pure_literals) == 0 and len(pure_literals_Not)==0:
+        return formula
+    else:
+        for pure_lit in pure_literals:
+            valuation[pure_lit] = True
+            simplify_by_literal(formula, pure_lit, True)
+        for pure_lit in pure_literals_Not:
+            valuation[pure_lit] = False
+            simplify_by_literal(formula, pure_lit, True)
+        return simplify_pure_literals(formula)
+    
 
 def simplify_by_literal(formula, l, tf):
     #funkcija poenostavi formulo formula glede na spremenljivko l.
