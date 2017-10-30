@@ -38,3 +38,67 @@ def find_pure_literals(formula):
             pure_literals_not.append(var)
     return [pure_literals, pure_literals_not]
     
+def simplify_unit_clauses(formula):
+    pass
+
+def simplify_pure_literals(formula):
+    #funkcija, ki formulo formula poenostavi tako, da poišče spremenljivke, ki
+    #nastopajo samo kot instance razreda Variable ali spremenljivke, ki
+    #nastopajo samo kot instance razreda Not. Spremenljivke kot instance razreda
+    #Variable nastavi na True ter poenostavi formulo glede na to spremenljivko.
+    #Spremenljivke kot instance razreda Not pa nastavi na False ter poenostavi
+    #formulo glede na to spremenljivko
+    pass
+
+def simplify_by_literal(formula, l, tf):
+    #funkcija poenostavi formulo formula glede na spremenljivko l.
+    print("poenostavljam:" + str(formula) + "!!!!!!:")
+    clauses = formula.terms
+    st_clauses = len(clauses)
+    i = 0
+    while i < st_clauses:
+        clause = clauses[i]
+        i = i+1
+        if isinstance(clause, Variable):
+            print("Variable:" + str(clause))
+            if (tf and clause==l) or clause==T:
+                clauses.remove(clause)
+                i, st_clauses = i-1, st_clauses-1
+            elif (not tf and clause==l) or clause==F:
+                return F
+        if isinstance(clause, Not):
+            print("Not:" + str(clause))
+            if (tf and clause.x==l) or clause.x==T:
+                return F
+            elif (not tf and clause.x==l) or clause.x==F:
+                clauses.remove(clause)
+                i, st_clauses = i-1, st_clauses-1
+        if isinstance(clause, Or):
+            print("Or:" + str(clause))
+            literals = clause.terms
+            if len(literals)==0:
+                print("literals je prazen")
+                return F
+            if (l in literals and tf) or (Not(l) in literals and not tf) \
+               or (T in literals):
+                print("v literals so že l(True) ali Not(l) (False) ali T")
+                clauses.remove(clause)
+                i, st_clauses = i-1, st_clauses-1
+                print(formula)
+            else:
+                if l in literals and not tf:
+                    print("v literals l in False")
+                    literals.remove(l)
+                if Not(l) in literals and tf:
+                    print("v literals Not(l) in True")
+                    literals.remove(Not(l))
+                if F in literals:
+                    print("v literals F")
+                    literals.remove(F)
+                if len(literals)==0:
+                    return F
+                print(formula)
+    if st_clauses == 0:
+        return T
+    else:
+        return formula
