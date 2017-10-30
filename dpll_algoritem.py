@@ -157,7 +157,7 @@ def simplify_by_literal(formula, l, tf):
         return formula
 
 def my_dpll(formula, koncni_valuation=None):
-    print("formula: " + str(formula))
+    #print("formula: " + str(formula))
     #funkcija po vrsti najprej poenostavi formulo glede na unit clause,
     #nato glede na pure literals. Za tem doda spremenljivke, ki so se izgubile
     #med poenostavljanjem formule. Nastavi jih na True.
@@ -168,17 +168,19 @@ def my_dpll(formula, koncni_valuation=None):
     if koncni_valuation is None:
         koncni_valuation = dict()
     spremenljivke_na_zacetku = get_all(formula)
-    print("POENOSTAVLJAM FORMULO GLEDE NA UNIT CLAUSE!!!!!!!!!")
+    #print("POENOSTAVLJAM FORMULO GLEDE NA UNIT CLAUSE!!!!!!!!!")
     [formula, valuation_unit_clauses] = simplify_unit_clauses(formula)
-    print(formula)
+    #print(formula)
     koncni_valuation.update(valuation_unit_clauses)
-    print("POENOSTAVLJAM FORMULO GLEDE NA PURE LITERALS!!!!!!!!!")
+    #print("POENOSTAVLJAM FORMULO GLEDE NA PURE LITERALS!!!!!!!!!")
     [formula, valuation_pure_literals] = simplify_pure_literals(formula)
-    print(formula)
+    #print(formula)
     koncni_valuation.update(valuation_pure_literals)
     #mogoče bi 3. del posebaj
     spremenljivke_zdaj = get_all(formula)
     formula_shrani = copy.deepcopy(formula)
+    #TA DEL NASTAVI VREDNOST SPREMENLJIVKAM, ZA KATERE
+    #VREDNOSTI NEBI RABILI NASTAVITI
     for spremenljivka in spremenljivke_na_zacetku:
         if (spremenljivka not in koncni_valuation) and \
            (spremenljivka not in spremenljivke_zdaj):
@@ -197,7 +199,7 @@ def my_dpll(formula, koncni_valuation=None):
         if globina != unsatisfiable:
             return globina
         else:
-            print("druga opcija: začnemo s formulo " + str(formula_shrani))
+            #print("druga opcija: začnemo s formulo " + str(formula_shrani))
             valuation_shrani[spr] = False
             formula_shrani = simplify_by_literal(formula_shrani, spr, False)
             return my_dpll(formula_shrani, valuation_shrani)

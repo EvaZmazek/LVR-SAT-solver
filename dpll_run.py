@@ -2,13 +2,48 @@ import copy
 from boolean import *
 from dpll_algoritem import *
 import sys
-
-print("This is the name of the script: ", sys.argv[0])
-print("Number of arguments: ", len(sys.argv))
-print("The arguments are: " , str(sys.argv))
+import time
 
 file1 = open(sys.argv[1], 'r')
-file2 = open(sys.argv[2], 'r')
+file2 = open(sys.argv[2], 'w')
+
+clauses = []
 
 for line in file1:
-    print(line)
+    if line[0]=="c":
+        continue
+    elif line[0]== "p":
+        arguments = line.strip().split(" ")
+        st_variables = arguments[2]
+        st_clauses = arguments[3]
+    else:
+        list_line = line.strip().split(" ")
+        list_line = list_line[:-1]
+        literals = []
+        for element in list_line:
+            if element[0]=="-":
+                literals.append(Not(element[1:]))
+            else:
+                literals.append(element)
+        clause = Or(*literals)
+        clauses.append(clause)
+
+f = And(*clauses)
+ff = copy.deepcopy(f)
+
+start = time.time()
+valuation = my_dpll(f)
+end = time.time()
+print(end-start)
+print(ff.evaluate(valuation))
+
+resitev = ""
+for i in valuation:
+    resitev += " "
+    if valuation[i]:
+        resitev += str(i)
+    else:
+        resitev += "-"
+        resitev += str(i)
+
+file2.write(resitev)
