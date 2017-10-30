@@ -24,17 +24,37 @@ def get_all_CNF(formula, spremenljivke=set(), spremenljivke_Not=set()):
             spremenljivke_Not = spremenljivke_Not.union(spremenljivke_Not_nove)
     return [spremenljivke, spremenljivke_Not]
 
-def my_dpll(formula, valuation=dict()):
+def my_dpll(formula):
+    valuation=dict()
     vse_spremenljivke = get_all(formula)
     st_vseh_spremenljivk = len(vse_spremenljivke)
     zacetna = And(*formula.terms) #to se verjetno da kako izboljšati
     vrednost = simplify_unit_clause(formula, valuation)
     if not vrednost:
+        formula = zacetna
         return False
+    vrednost = simplify_pure_literal(formula, valuation)
+    if not vrednost:
+        formula = zacetna
+        return False
+    nedolocene_spremenljivke = get_all(formula)
+    for spr in vse_spremenljivke:
+        if spr not in valuation and spr not in nedolocene_spremenljivke:
+            valuation[spr]=True
+    if len(nedolocene_spremenljivke)==0:
+        if zacetna.evaluate(valuation):
+            return valuation
+    else:
+        pass
+            
+def simplify_pure_literal(formula, valuation):
+    print("poenostavljam pure literal")
     spremenljivke, spremenljivke_Not = get_all_CNF(formula)
     pure_literal = []
     prva_dolzina = len(valuation)
     ostale_spremenljivke = spremenljivke.union(spremenljivke_Not)
+    if len(ostale_spremenljivke)==0:
+        return formula.evaluate(dict())
     for spre in ostale_spremenljivke:
         if (spre in spremenljivke and spre not in spremenljivke_Not) \
            or (spre not in spremenljivke and spre in spremenljivke_Not):
@@ -48,11 +68,9 @@ def my_dpll(formula, valuation=dict()):
             print("poenostavljam zaradi pure variable")
             vrednost = simplify_by_literal(formula, plit, True)
             if vrednost == F:
+                formula = zacetna
                 return False
             if vrednost == T:
-                for spremenljivka in vse_spremenljivke:
-                    if spremenljivka not in valuation:
-                        valuation[spremenljivka] = True
                 return valuation
         else:
             valuation[plit] = False
@@ -61,33 +79,15 @@ def my_dpll(formula, valuation=dict()):
             if vrednost == F:
                 return False
             if vrednost == T:
-                for spremenljivka in vse_spremenljivke:
-                    if spremenljivka not in valuation:
-                        valuation[spremenljivka] = True
                 return valuation
-    nedolocene_spremenljivke = get_all(formula)
-    if len(nedolocene_spremenljivke)==0:
-        if len(valuation)==st_vseh_spremenljivk and zacetna.evaluate(valuation):
-            return valuation
-        for spremenljivka in vse_spremenljivke:
-            if spremenljivka not in valuation:
-                valuation[spremenljivka] = True
-            if zacetna.evaluate(valuation):
-                return valuation
-            else:
-                return False
-    else:
-        print("grem preizkušat:")
-        doloci_l = nedolocene_spremenljivke.pop()
-        print(formula)
-        my_dpll(formula, valuation)
-        return valuation
 
 def simplify_unit_clause(formula, valuation=dict()):
     print("iščem unit clause")
     clauses = formula.terms
     print(formula)
     st_clauses = len(clauses)
+    if st_clauses == 0:
+        return True
     i = 0
     while i < st_clauses:
         clause = clauses[i]
@@ -129,12 +129,6 @@ def simplify_unit_clause(formula, valuation=dict()):
                 return False
             simplify_unit_clause(formula, valuation)
             return valuation
-
-def simplify_pore_literal(formula, valuation):
-    #mogoče pojdi čez seznam vseh spremenljivk in označi, če je spremenljivka (nastavi na true),
-    #če je negacija (nastavi na false) in preglejuj če se kdaj seka --> odstrani iz seznama pure
-    #pure literal. Na začetku nastavi na none
-    pass
 
 def simplify_by_literal(formula, l, tf):
     print(formula)
@@ -186,7 +180,7 @@ def simplify_by_literal(formula, l, tf):
     if st_clauses==0:
         return T
     else:
-        return formula
+        print("Zgodila se je izjema")
 
                 
                 
