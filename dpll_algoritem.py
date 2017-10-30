@@ -180,8 +180,8 @@ def my_dpll(formula, koncni_valuation=None):
     spremenljivke_zdaj = get_all(formula)
     formula_shrani = copy.deepcopy(formula)
     #TA DEL NASTAVI VREDNOST SPREMENLJIVKAM, ZA KATERE
-    #VREDNOSTI NEBI RABILI NASTAVITI
-    for spremenljivka in spremenljivke_na_zacetku:
+    #VREDNOSTI NEBI RABILI NASTAVITI - prišpara 5/1.2 % ČASA 
+    #for spremenljivka in spremenljivke_na_zacetku:
         if (spremenljivka not in koncni_valuation) and \
            (spremenljivka not in spremenljivke_zdaj):
             koncni_valuation[spremenljivka] = True
