@@ -236,9 +236,9 @@ ponovno poskusimo priti do rešitve s rekurzivnim klicom na obstoječi formuli i
 
 ### dinamic format:
 
-*vrstice, ki se začnejo s črko c, so komentarji
-*vrstica, ki se začne s črko p, poda po vrsti obliko formule (v našem primeru cnf oblika), število spremenljivk v ter število stavkov c.
-*vsaka naslednja vrstica predstavlja stavek. Literali so ločeni s presledki. Literal tipa Variable je podan kot pozitivno število, literal tipa Not pa kot negativno število (Not("1")="-1"). Na koncu vsakega stavka je število 0.
+* vrstice, ki se začnejo s črko c, so komentarji
+* vrstica, ki se začne s črko p, poda po vrsti obliko formule (v našem primeru cnf oblika), število spremenljivk v ter število stavkov c.
+* vsaka naslednja vrstica predstavlja stavek. Literali so ločeni s presledki. Literal tipa Variable je podan kot pozitivno število, literal tipa Not pa kot negativno število (Not("1")="-1"). Na koncu vsakega stavka je število 0.
 
  ```txt
 c komentar1
