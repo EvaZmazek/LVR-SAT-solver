@@ -4,7 +4,7 @@ LITERAL = LITERAL
 
 An (incomplete) SAT solver
 
-## IMPLEMENTING DPLL ALGORITEM
+## IMPLEMENTATION OF DPLL ALGORITEM
 
 Pomožnje fonckije, uporabljene za dpll algoritem:
 ### get_all(formula, spremenljivke = None)
@@ -232,9 +232,9 @@ Izberemo prvo spremenljivko, ki še nima določene vrednosti.
 Vrednost te spremenljivke nastavimo na True.
 ponovno poskusimo priti do rešitve s rekurzivnim klicom na obstoječi formuli in obstoječem seznamu. Če nam uspe, vrnemo to rešitev, sicer uporabimo kopiji formule in seznama pred "ugibanjem" ter na teh kopijah poskusimo priti do rešitve. Ker v tem primeru za vrednost izbrane spremenljivke True, formula ni satifiable, je edina možnost, da je satisfiable le tista, pri kateri je vrednost izbrane spremenljivke enaka False. Če tudi v tem primeru formula ni satisfiable, potem ni satisfiable v nobenem primeru. Zato lahko vrnemo kar rešitev rekurzivnega klica my_dpll(formula_shrani, valuation_shrani).
 
-##POGANJANJE DATOTEK V FORMATU DINAMIC FORMAT
+## POGANJANJE DATOTEK V FORMATU DINAMIC FORMAT
 
-#dinamic format:
+### dinamic format:
 
 *vrstice, ki se začnejo s črko c, so komentarji
 *vrstica, ki se začne s črko p, poda po vrsti obliko formule (v našem primeru cnf oblika), število spremenljivk v ter število stavkov c.
