@@ -200,16 +200,13 @@ def my_dpll(formula, koncni_valuation=None):
     else:
         formula_shrani = copy.deepcopy(formula)
         valuation_shrani = copy.deepcopy(koncni_valuation)
-        print("spremenljivke_zdaj:" + str(spremenljivke_zdaj))
         spr = spremenljivke_zdaj.pop()
-        print(formula_shrani)
         koncni_valuation[spr] = True
         formula = simplify_by_literal(formula, spr, True)
         globina = my_dpll(formula, koncni_valuation)
         if globina != unsatisfiable:
             return globina
         else:
-            #print("druga opcija: začnemo s formulo " + str(formula_shrani))
             valuation_shrani[spr] = False
             formula_shrani = simplify_by_literal(formula_shrani, spr, False)
             return my_dpll(formula_shrani, valuation_shrani)

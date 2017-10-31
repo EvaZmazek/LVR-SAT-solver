@@ -2,9 +2,9 @@ from graphColouring import *
 
 file = open("testni_primer_1min.txt", 'w')
 
-G = [[1,5], [0,2], [1,3], [2,4], [3,5], [0,4]]
+G = [[1,5], [0,2,3], [1,3,5], [2,4], [3,5], [0,4], [0, 3, 4], [2, 5, 7], [1, 2, 3]]
 
-formula = graphColouring2SATdo9(G, 2)
+formula = graphColouring2SATdo9(G, 4)
 formula2 = graphColouring2SAT(G,2)
 print(formula)
 print(formula2)
