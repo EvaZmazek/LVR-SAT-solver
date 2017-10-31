@@ -119,7 +119,7 @@ Sicer za vsako "pure literal" pogledamo ali je "pure literal" tipa Variable (v t
             simplify_by_literal(formula, pure_lit, True)
         for pure_lit in pure_literals_Not:
             koncni_valuation[pure_lit] = False
-            simplify_by_literal(formula, pure_lit, True)
+            simplify_by_literal(formula, pure_lit, False)
         return simplify_pure_literals(formula, koncni_valuation)
 ```
 
