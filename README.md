@@ -257,7 +257,22 @@ p cnf 2 1
 -1 -2 0
 ```
 
-Datoteko s primerom poženemo s pomočjo funkcije dpll_run:
+Datoteko s primerom poženemo s pomočjo funkcije dpll_run.py:
 ```
 Evas-MBP:LVR-SAT-solver evazmazek$ python3 dpll_run.py 'testing_files/example9.txt' 'outputfilename.txt'
+```
+
+Izpiše nam formulo, valuation (ki formulo reši), čas (ki ga za to potrebuje) ter True (če ima formula za te vrednosti res rešitev T):
+```
+~1 \/ ~2
+{'1': False, '2': False}
+0.00010180473327636719
+True
+```
+
+V datoteko outputfilename.txt zapiše vrednosti spremenljivk, ločene s presledki. Če je vrednost spremenljivke "i" enaka True, bo v datoteko zapisalo "i", sicer bo zapisalo "-i".
+
+Primer za And(Or(Not("1"), Not("2"))):
+```txt
+ -1 -2
 ```
