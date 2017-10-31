@@ -1,5 +1,7 @@
 import copy
 from boolean import*
+import sys
+sys.setrecursionlimit(2000)
 
 F = Or()
 T = And()
@@ -12,7 +14,7 @@ def get_all(formula, spremenljivke=None):
     if spremenljivke is None:
         spremenljivke = set()
     if isinstance(formula, Variable):
-        spremenljivke = spremenljivke.union(formula.x)
+        spremenljivke.add(formula.x)
     elif isinstance(formula, Not):
         spremenljivke = spremenljivke.union(get_all(formula.x))
     elif isinstance(formula, And) or isinstance(formula, Or):
@@ -28,7 +30,7 @@ def get_all_V_NV(formula, spremenljivke=None, spremenljivke_Not=None):
     if spremenljivke_Not is None:
         spremenljivke_Not = set()
     if isinstance(formula, Variable):
-        spremenljivke = spremenljivke.union(formula.x)
+        spremenljivke.add(formula.x)
     elif isinstance(formula, Not):
         spremenljivke_Not = spremenljivke_Not.union(get_all_V_NV(formula.x)[0])
     elif isinstance(formula, And) or isinstance(formula, Or):
@@ -77,6 +79,8 @@ def simplify_unit_clauses(formula, koncni_valuation=None):
             else:
                 if F in literals:
                     literals.remove(F)
+                if len(literals) == 0:
+                    return [F, koncni_valuation]
                 if len(literals)==1:
                     if isinstance(literals[0], Variable):
                         valuation[literals[0].x]=True
@@ -113,7 +117,7 @@ def simplify_pure_literals(formula, koncni_valuation=None):
             simplify_by_literal(formula, pure_lit, True)
         for pure_lit in pure_literals_Not:
             koncni_valuation[pure_lit] = False
-            simplify_by_literal(formula, pure_lit, True)
+            simplify_by_literal(formula, pure_lit, False)
         return simplify_pure_literals(formula, koncni_valuation)
     
 
@@ -173,7 +177,6 @@ def my_dpll(formula, koncni_valuation=None):
     spremenljivke_na_zacetku = get_all(formula)
     #print("POENOSTAVLJAM FORMULO GLEDE NA UNIT CLAUSE!!!!!!!!!")
     [formula, valuation_unit_clauses] = simplify_unit_clauses(formula)
-    print(formula)
     koncni_valuation.update(valuation_unit_clauses)
     #print("POENOSTAVLJAM FORMULO GLEDE NA PURE LITERALS!!!!!!!!!")
     [formula, valuation_pure_literals] = simplify_pure_literals(formula)
@@ -181,7 +184,6 @@ def my_dpll(formula, koncni_valuation=None):
     koncni_valuation.update(valuation_pure_literals)
     #mogoče bi 3. del posebaj
     spremenljivke_zdaj = get_all(formula)
-    formula_shrani = copy.deepcopy(formula)
     #TA DEL NASTAVI VREDNOST SPREMENLJIVKAM, ZA KATERE
     #VREDNOSTI NEBI RABILI NASTAVITI - prišpara 5/1.2 % ČASA 
     for spremenljivka in spremenljivke_na_zacetku:
@@ -196,8 +198,11 @@ def my_dpll(formula, koncni_valuation=None):
     elif len(spremenljivke_zdaj) == 0:
         return koncni_valuation
     else:
+        formula_shrani = copy.deepcopy(formula)
         valuation_shrani = copy.deepcopy(koncni_valuation)
+        print("spremenljivke_zdaj:" + str(spremenljivke_zdaj))
         spr = spremenljivke_zdaj.pop()
+        print(formula_shrani)
         koncni_valuation[spr] = True
         formula = simplify_by_literal(formula, spr, True)
         globina = my_dpll(formula, koncni_valuation)

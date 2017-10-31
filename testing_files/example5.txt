@@ -1,5 +1,5 @@
 c example5
 c example for And("p","q")
 p cnf 2 2
-1
-2
+1 0
+2 0

@@ -17,7 +17,7 @@ def graphColouring2SAT(G, k):
                 conj.append(Or(Not((i,j)), Not((i,jj))))
         for h in G[i]:
             for j in range(k):
-                conj.append(Or(Not((i,j)), Not((i,jj))))
+                conj.append(Or(Not((i,j)), Not((h,j))))
     return And(*conj)
 
 #####################   UPORABA DATOTEKE    #########################
@@ -39,3 +39,45 @@ def SAT2graphColouring(sol):
     for i, j in d.items():
         out[i] = j
     return out
+
+def graphColouring2SATdo9(G, k):
+    conj = []
+    literals0 = []
+    literals1 = []
+    literals2 = []
+    for i in range(len(G)):
+        for j in range(k):
+            spremenljivka = ""
+            spremenljivka += str(i)
+            spremenljivka += str(j)
+            literals0.append(spremenljivka)
+        conj.append(Or(*literals0))
+        literals0 = []
+        #vsako vozlišče je neke barve
+        #(i,j) je spremenljivka ker še ni instanca razreda Formula
+        #--> makeFormula jo naredi v spremenljivko
+        for j in range(k):
+            spremenljivka1 = ""
+            spremenljivka1 += str(i)
+            spremenljivka1 += str(j)
+            for jj in range(j+1,k):
+                spremenljivka2 = ""
+                spremenljivka2 += str(i)
+                spremenljivka2 += str(jj)
+                literals1.append(Not(spremenljivka1))
+                literals1.append(Not(spremenljivka2))
+                conj.append(Or(*literals1))
+                literals1 = []
+        for h in G[i]:
+            for j in range(k):
+                spremenljivka1 = ""
+                spremenljivka1 += str(i)
+                spremenljivka1 += str(j)
+                spremenljivka2 = ""
+                spremenljivka2 += str(h)
+                spremenljivka2 += str(j)
+                literals2.append(Not(spremenljivka1))
+                literals2.append(Not(spremenljivka2))
+                conj.append(Or(*literals2))
+                literals2 = []
+    return And(*conj)

@@ -4,6 +4,8 @@ from dpll_algoritem import *
 import sys
 import time
 
+sys.setrecursionlimit(2000)
+
 file1 = open(sys.argv[1], 'r')
 file2 = open(sys.argv[2], 'w')
 
@@ -18,8 +20,7 @@ for line in file1:
         st_clauses = arguments[3]
     else:
         list_line = line.strip().split(" ")
-        if len(list_line) > 1:
-            list_line = list_line[:-1]
+        list_line = list_line[:-1]
         literals = []
         for element in list_line:
             if element[0]=="-":
@@ -36,11 +37,12 @@ ff = copy.deepcopy(f)
 
 start = time.time()
 valuation = my_dpll(f)
+print(valuation)
 end = time.time()
 print(end-start)
 
 if valuation == unsatisfiable:
-    file2.write(0)
+    file2.write("0")
 else:
     print(ff.evaluate(valuation))
     resitev = ""

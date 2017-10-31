@@ -1,4 +1,4 @@
 c example7
 c example for And(Or("p","q"))
 p cnf 2 1
-1 2
+1 2 0

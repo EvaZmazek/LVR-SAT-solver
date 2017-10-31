@@ -1,4 +1,4 @@
 c example3
 c example for And(Not("p")) ("p" = 1, Not("p") = -1)
 p cnf 1 1
--1
+-1 0
