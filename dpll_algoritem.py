@@ -1,6 +1,9 @@
 import copy
 from boolean import*
 
+F = Or()
+T = And()
+
 #možna izboljšava: p in Not(p) se skupaj pojavljata le v istam Oru
 #oz. na en Or enkrat p in enkrat q
 
@@ -170,7 +173,7 @@ def my_dpll(formula, koncni_valuation=None):
     spremenljivke_na_zacetku = get_all(formula)
     #print("POENOSTAVLJAM FORMULO GLEDE NA UNIT CLAUSE!!!!!!!!!")
     [formula, valuation_unit_clauses] = simplify_unit_clauses(formula)
-    #print(formula)
+    print(formula)
     koncni_valuation.update(valuation_unit_clauses)
     #print("POENOSTAVLJAM FORMULO GLEDE NA PURE LITERALS!!!!!!!!!")
     [formula, valuation_pure_literals] = simplify_pure_literals(formula)
@@ -190,6 +193,8 @@ def my_dpll(formula, koncni_valuation=None):
         return koncni_valuation
     elif formula == F:
         return unsatisfiable
+    elif len(spremenljivke_zdaj) == 0:
+        return koncni_valuation
     else:
         valuation_shrani = copy.deepcopy(koncni_valuation)
         spr = spremenljivke_zdaj.pop()

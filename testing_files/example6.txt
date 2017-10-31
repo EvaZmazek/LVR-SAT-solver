@@ -1,0 +1,4 @@
+c example6
+c example for And(Or("p"))
+p cnf 1 1
+1

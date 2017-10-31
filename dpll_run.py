@@ -18,7 +18,8 @@ for line in file1:
         st_clauses = arguments[3]
     else:
         list_line = line.strip().split(" ")
-        list_line = list_line[:-1]
+        if len(list_line) > 1:
+            list_line = list_line[:-1]
         literals = []
         for element in list_line:
             if element[0]=="-":
@@ -28,7 +29,9 @@ for line in file1:
         clause = Or(*literals)
         clauses.append(clause)
 
+unsatisfiable = "formula is unsatisfiable"
 f = And(*clauses)
+print(f)
 ff = copy.deepcopy(f)
 
 start = time.time()
@@ -37,13 +40,17 @@ end = time.time()
 print(end-start)
 print(ff.evaluate(valuation))
 
-resitev = ""
-for i in valuation:
-    resitev += " "
-    if valuation[i]:
-        resitev += str(i)
-    else:
-        resitev += "-"
-        resitev += str(i)
+if valuation == unsatisfiable:
+    file2.write(0)
+else:
+    resitev = ""
+    for i in valuation:
+        resitev += " "
+        if valuation[i]:
+            resitev += str(i)
+        else:
+            resitev += "-"
+            resitev += str(i)
+    file2.write(resitev)
 
-file2.write(resitev)
+##### TODO izpis unsatisfiable solutins

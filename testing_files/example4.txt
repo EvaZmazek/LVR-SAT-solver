@@ -1,0 +1,5 @@
+c example4
+c example for And("p",Not("p"))
+p cnf 1 2
+1
+-1

@@ -1,0 +1,4 @@
+c example9
+c example for And(Or(Not("p"), Not("q")))
+p cnf 2 1
+-1 -2
