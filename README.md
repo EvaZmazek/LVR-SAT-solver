@@ -5,10 +5,13 @@ An (incomplete) SAT solver
 
 Pomožnje fonckije, uporabljene za dpll algoritem:
 # get_all(formula, spremenljivke = None)
+Ta funkcija vrne množico vseh spremenljivk v obliki konstruktorja (konstruktor od Not("p") je "p").
 
 # get_all_V_NV(formula, spremenljivke=None, spremenljivke_Not=None)
+Funkcija get_all_V_NV sprejme formulo ter vrne množico spremenljivk, ki nastopajo kot instance razreda Variable. Ta množica je poimenovana spremenljivke. Hkrati vrne tudi množico spremenljivk, ki nastopajo kot instance razreda Not. Ta množica je poimenovana spremenljivke_Not. Tako kot pri funkciji get_all, so tudi tu spremenljivke v množicah podane v obliki konstruktorja.
 
 # find_pure_literals(formula)
+Funkcija find_pure_literals sprejme formulo ter vrne seznam spremenljivk, ki nastopajo le kot instance razreda Variable. Ta seznam je poimenovan pure_literals. Hkrati vrne tudi seznam spremenljivk, ki nastopajo le kot instance razreda Not. Ta seznam je poimenovan pure_literals_not. Podobno kot pri funkcijah get_all in get_all_V_NV so spremenljivke v seznamih podane v obliki konstruktorja.
 
 # simplify_unit_clauses(formula, koncni_valuation=None)
 
