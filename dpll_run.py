@@ -38,11 +38,11 @@ start = time.time()
 valuation = my_dpll(f)
 end = time.time()
 print(end-start)
-print(ff.evaluate(valuation))
 
 if valuation == unsatisfiable:
     file2.write(0)
 else:
+    print(ff.evaluate(valuation))
     resitev = ""
     for i in valuation:
         resitev += " "
@@ -52,5 +52,3 @@ else:
             resitev += "-"
             resitev += str(i)
     file2.write(resitev)
-
-##### TODO izpis unsatisfiable solutins
