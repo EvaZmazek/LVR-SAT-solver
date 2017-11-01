@@ -1,7 +1,6 @@
 import copy
 from boolean import*
 import sys
-sys.setrecursionlimit(2000)
 
 F = Or()
 T = And()
