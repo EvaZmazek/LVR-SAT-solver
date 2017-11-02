@@ -180,6 +180,14 @@ def my_dpll(formula, koncni_valuation=None):
     #print("POENOSTAVLJAM FORMULO GLEDE NA PURE LITERALS!!!!!!!!!")
     [formula, valuation_pure_literals] = simplify_pure_literals(formula)
     #print(formula)
+    for val in koncni_valuation:
+        tf = koncni_valuation[val]
+        if val in valuation_unit_clauses:
+            if valuation_unit_clauses[val] != tf:
+                return unsatisfiable
+        if val in valuation_pure_literals:
+            if valuation_pure_literals[val] != tf:
+                return unsatisfiable
     koncni_valuation.update(valuation_pure_literals)
     #mogoče bi 3. del posebaj
     spremenljivke_zdaj = get_all(formula)
