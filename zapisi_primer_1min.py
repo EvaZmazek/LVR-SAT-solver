@@ -2,13 +2,11 @@ from graphColouring import *
 
 file = open("testni_primer_1min.txt", 'w')
 
-G = [[1, 5], [0, 2, 3], [1, 3, 5], [2, 4], [3, 5], [0, 4], [0, 3, 4], [2, 5, 7], [1, 2, 3]] 
+G = [[1], [0, 1], [3, 5], [0, 4], [0, 3, 4], [2, 5, 7], [1, 2, 3]] 
 # [[1,2,5,3,8,9], [0,2,3], [0,1,3,5,8], [0,1,2,4], [3,5,7,8,9], [0,2,6], [7,8,9], [5,6,8], [0,2,5,6,7], [0,5,6]]
 
-formula = graphColouring2SATdo9(G, 5)
-formula2 = graphColouring2SAT(G,2)
+formula = graphColouring2SATdo9(G, 3)
 print(formula)
-print(formula2)
 clauses = formula.terms
 
 file.write("c testni_primer_1min.txt \n")

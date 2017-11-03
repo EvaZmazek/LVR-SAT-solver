@@ -1,6 +1,7 @@
 import copy
 from boolean import*
 import sys
+import numpy as np
 
 F = Or()
 T = And()
@@ -67,8 +68,16 @@ def simplify_unit_clauses(formula, koncni_valuation=None):
         clause = clauses[i]
         i = i+1
         if isinstance(clause, Variable):
+##            #dodano preverjanje
+##            if clause.x in valuation:
+##                if valuation[clause.x] == False:
+##                    return [F, dict()]
             valuation[clause.x] = True
         elif isinstance(clause, Not):
+##            #dodano preverjanje
+##            if clause.x in valuation:
+##                if valuation[clause.x] == True:
+##                    return [F, dict()]
             valuation[clause.x.x] = False
         elif isinstance(clause, Or):
             literals = clause.terms
@@ -81,14 +90,26 @@ def simplify_unit_clauses(formula, koncni_valuation=None):
                 if len(literals) == 0:
                     return [F, koncni_valuation]
                 if len(literals)==1:
-                    if isinstance(literals[0], Variable):
-                        valuation[literals[0].x]=True
-                    elif isinstance(literals[0], Not):
+                    clause = literals[0]
+                    if isinstance(clause, Variable):
+##                        #dodano preverjanje
+##                        if clause.x in valuation:
+##                            if valuation[clause.x] == False:
+##                                return [F, dict()]
+                        valuation[clause.x]=True
+                    elif isinstance(clause, Not):
+##                        #dodano preverjanje
+##                        if clause.x.x in valuation:
+##                            if valuation[clause.x.x] == True:
+##                                return [F, dict()]
                         valuation[literals[0].x.x]=False
     if len(valuation) == 0:
         return [formula, koncni_valuation]
     else:
         for var in valuation:
+            if var in koncni_valuation:
+                if koncni_valuation[var] != valuation[var]:
+                    return [F, dict()]
             koncni_valuation[var] = valuation[var]
             formula = simplify_by_literal(formula, var, valuation[var])
             if formula==T:
@@ -112,9 +133,17 @@ def simplify_pure_literals(formula, koncni_valuation=None):
         return [formula, koncni_valuation]
     else:
         for pure_lit in pure_literals:
+##            #dodano preverjanje
+##            if pure_lit in koncni_valuation:
+##                if koncni_valuation[pure_lit] == False:
+##                    return [F, dict()]
             koncni_valuation[pure_lit] = True
             simplify_by_literal(formula, pure_lit, True)
         for pure_lit in pure_literals_Not:
+##            #dodano preverjanje
+##            if pure_lit in koncni_valuation:
+##                if koncni_valuation[pure_lit] == True:
+##                    return [F, dict()]
             koncni_valuation[pure_lit] = False
             simplify_by_literal(formula, pure_lit, False)
         return simplify_pure_literals(formula, koncni_valuation)
@@ -149,11 +178,11 @@ def simplify_by_literal(formula, l, tf):
                 clauses.remove(clause)
                 i, st_clauses = i-1, st_clauses-1
             else:
-                if l in literals and not tf:
+                while (l in literals and not tf):
                     literals.remove(l)
-                if Not(l) in literals and tf:
+                while (Not(l) in literals and tf):
                     literals.remove(Not(l))
-                if F in literals:
+                while (F in literals):
                     literals.remove(F)
                 if len(literals)==0:
                     return F
@@ -174,12 +203,9 @@ def my_dpll(formula, koncni_valuation=None):
     if koncni_valuation is None:
         koncni_valuation = dict()
     spremenljivke_na_zacetku = get_all(formula)
-    #print("POENOSTAVLJAM FORMULO GLEDE NA UNIT CLAUSE!!!!!!!!!")
     [formula, valuation_unit_clauses] = simplify_unit_clauses(formula)
     koncni_valuation.update(valuation_unit_clauses)
-    #print("POENOSTAVLJAM FORMULO GLEDE NA PURE LITERALS!!!!!!!!!")
     [formula, valuation_pure_literals] = simplify_pure_literals(formula)
-    #print(formula)
     for val in koncni_valuation:
         tf = koncni_valuation[val]
         if val in valuation_unit_clauses:

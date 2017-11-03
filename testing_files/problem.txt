@@ -1,0 +1,5 @@
+c primer, v katerem nastane problem
+c probam rešiti
+p cnf 1 2
+1 0
+-1 -1 0
