@@ -68,16 +68,16 @@ def simplify_unit_clauses(formula, koncni_valuation=None):
         clause = clauses[i]
         i = i+1
         if isinstance(clause, Variable):
-##            #dodano preverjanje
-##            if clause.x in valuation:
-##                if valuation[clause.x] == False:
-##                    return [F, dict()]
+            #dodano preverjanje
+            if clause.x in valuation:
+                if valuation[clause.x] == False:
+                    return [F, dict()]
             valuation[clause.x] = True
         elif isinstance(clause, Not):
-##            #dodano preverjanje
-##            if clause.x in valuation:
-##                if valuation[clause.x] == True:
-##                    return [F, dict()]
+            #dodano preverjanje
+            if clause.x in valuation:
+                if valuation[clause.x] == True:
+                    return [F, dict()]
             valuation[clause.x.x] = False
         elif isinstance(clause, Or):
             literals = clause.terms
@@ -92,16 +92,16 @@ def simplify_unit_clauses(formula, koncni_valuation=None):
                 if len(literals)==1:
                     clause = literals[0]
                     if isinstance(clause, Variable):
-##                        #dodano preverjanje
-##                        if clause.x in valuation:
-##                            if valuation[clause.x] == False:
-##                                return [F, dict()]
+                        #dodano preverjanje
+                        if clause.x in valuation:
+                            if valuation[clause.x] == False:
+                                return [F, dict()]
                         valuation[clause.x]=True
                     elif isinstance(clause, Not):
-##                        #dodano preverjanje
-##                        if clause.x.x in valuation:
-##                            if valuation[clause.x.x] == True:
-##                                return [F, dict()]
+                        #dodano preverjanje
+                        if clause.x.x in valuation:
+                            if valuation[clause.x.x] == True:
+                                return [F, dict()]
                         valuation[literals[0].x.x]=False
     if len(valuation) == 0:
         return [formula, koncni_valuation]
