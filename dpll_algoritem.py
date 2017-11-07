@@ -11,6 +11,31 @@ T = And()
 #možna izboljšava: p in Not(p) se skupaj pojavljata le v istam Oru
 #oz. na en Or enkrat p in enkrat q
 
+def get_all_doubled_too(formula, spremenljivke=None):
+    if spremenljivke is None:
+        spremenljivke = list()
+    if isinstance(formula, Variable):
+        spremenljivke = spremenljivke + [formula.x]
+    elif isinstance(formula, Not):
+        spremenljivke = spremenljivke + get_all_doubled_too(formula.x)
+    elif isinstance(formula, And) or isinstance(formula, Or):
+        for term in formula.terms:
+            spremenljivke = spremenljivke + get_all_doubled_too(term)
+    return spremenljivke
+
+def get_most_appeared(formula):
+    slovar_spremenljivk = dict()
+    spremenljivke = get_all_doubled_too(formula)
+    maximalna = spremenljivke[0]
+    for s in spremenljivke:
+        if s in slovar_spremenljivk:
+            slovar_spremenljivk[s] = slovar_spremenljivk[s] + 1
+            if slovar_spremenljivk[s] > slovar_spremenljivk[maximalna]:
+                maxsimalna = s
+        else:
+            slovar_spremenljivk[s] = 1
+    return maximalna        
+
 def get_all(formula, spremenljivke=None):
     #funkcija poišče vse spremenljivke formule, podane v CNF obliki
     if spremenljivke is None:
@@ -235,7 +260,8 @@ def my_dpll(formula, koncni_valuation=None):
     else:
         formula_shrani = copy.deepcopy(formula)
         valuation_shrani = copy.deepcopy(koncni_valuation)
-        spr = spremenljivke_zdaj.pop()
+        spr = get_most_appeared(formula)
+ #       spr = spremenljivke_zdaj.pop()
         koncni_valuation[spr] = True
         formula = simplify_by_literal(formula, spr, True)
         globina = my_dpll(formula, koncni_valuation)
