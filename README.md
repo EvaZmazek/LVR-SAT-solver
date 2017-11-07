@@ -213,7 +213,7 @@ Glavni del programa:
  koncni_valuation.update(valuation_pure_literals)
  ```
  * v seznam spremeljivke_zdaj shrani spremenljivke, ki še niso bile določene do tega koraka.
- * Spremenljivke, ki so bile na začetku v formuli, po poenostavljanju pa jih ni več ter jim med poenostavljanjem nismo določili vrednosti, nastavimo na True:
+ * Spremenljivke, ki so bile na začetku v formuli, po poenostavljanju pa jih ni več ter jim med poenostavljanjem nismo določili vrednosti, nastavimo na True: (lahko odkomentiramo v kodi ta del-zakomentiran je)
  ```python3
      for spremenljivka in spremenljivke_na_zacetku:
         if (spremenljivka not in koncni_valuation) and \
@@ -228,7 +228,7 @@ Glavni del programa:
  formula_shrani = copy.deepcopy(formula)
  valuation_shrani = copy.deepcopy(koncni_valuation)
 ```
-Izberemo prvo spremenljivko, ki še nima določene vrednosti.
+Izberemo prvo spremenljivko, ki še nima določene vrednosti. To spremenljivko izberemo tako, da izberemo tisto, ki se največkrat ponovi v formuli.
 Vrednost te spremenljivke nastavimo na True.
 ponovno poskusimo priti do rešitve s rekurzivnim klicom na obstoječi formuli in obstoječem seznamu. Če nam uspe, vrnemo to rešitev, sicer uporabimo kopiji formule in seznama pred "ugibanjem" ter na teh kopijah poskusimo priti do rešitve. Ker v tem primeru za vrednost izbrane spremenljivke True, formula ni satifiable, je edina možnost, da je satisfiable le tista, pri kateri je vrednost izbrane spremenljivke enaka False. Če tudi v tem primeru formula ni satisfiable, potem ni satisfiable v nobenem primeru. Zato lahko vrnemo kar rešitev rekurzivnega klica my_dpll(formula_shrani, valuation_shrani).
 
@@ -259,7 +259,7 @@ p cnf 2 1
 
 Datoteko s primerom poženemo s pomočjo funkcije dpll_run.py:
 ```
-Evas-MBP:LVR-SAT-solver evazmazek$ python3 dpll_run.py 'testing_files/example9.txt' 'outputfilename.txt'
+Evas-MBP:LVR-SAT-solver evazmazek$ python3 dpll_run.py 'testing_files/problem1min.txt' 'outputfilename.txt'
 ```
 
 Izpiše nam formulo, valuation (ki formulo reši), čas (ki ga za to potrebuje) ter True (če ima formula za te vrednosti res rešitev T):
