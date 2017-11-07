@@ -44,7 +44,7 @@ print(end-start)
 if valuation == unsatisfiable:
     file2.write("0")
 else:
-##    print(ff.evaluate(valuation))
+    print(ff.evaluate(valuation))
     resitev = ""
     for i in valuation:
         resitev += " "
