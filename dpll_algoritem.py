@@ -6,6 +6,8 @@ import numpy as np
 F = Or()
 T = And()
 
+#DODAJ IZBIRANJE PO POJAVITVAH!!
+
 #možna izboljšava: p in Not(p) se skupaj pojavljata le v istam Oru
 #oz. na en Or enkrat p in enkrat q
 
