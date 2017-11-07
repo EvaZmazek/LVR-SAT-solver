@@ -32,19 +32,19 @@ for line in file1:
 
 unsatisfiable = "formula is unsatisfiable"
 f = And(*clauses)
-print(f)
+##print(f)
 ff = copy.deepcopy(f)
 
 start = time.time()
 valuation = my_dpll(f)
-print(valuation)
+##print(valuation)
 end = time.time()
 print(end-start)
 
 if valuation == unsatisfiable:
     file2.write("0")
 else:
-    print(ff.evaluate(valuation))
+##    print(ff.evaluate(valuation))
     resitev = ""
     for i in valuation:
         resitev += " "
