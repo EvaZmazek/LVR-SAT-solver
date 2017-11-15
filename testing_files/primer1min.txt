@@ -1,6 +1,6 @@
 c Another 9*9 Sudoku puzzle, this time at 'very easy' level
 c Atom pxyn is represented by 81*(x-1)+9*(y-1)+n
-p cnf 729 12024  
+p cnf 729 7584  
 -274 -283 0 
 -275 -284 0 
 -276 -285 0 
